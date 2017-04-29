@@ -234,7 +234,7 @@ typename ObjectPool<Object>::Ptr ObjectPoolBuilder<Object>::build()
                     m_normalPoolSize
                 );
 
-    return ObjectPool<Object>::Ptr(pool, [](ObjectPool<Object> *pool) { pool->destroy(); });
+    return typename ObjectPool<Object>::Ptr(pool, [](ObjectPool<Object> *pool) { pool->destroy(); });
 }
 
 #endif // OBJECTPOOL_HPP
