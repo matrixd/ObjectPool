@@ -15,7 +15,7 @@ public:
     using ObjectFreeFunction = std::function<void(Object*)>;
     using ObjectBackToPoolFunction = std::function<void(Object*)>;
     using ObjectFabric = std::function<Object*()>;
-    using ObjectPoolPtr = std::shared_ptr<ObjectPool<Object>>;
+    using Ptr = std::shared_ptr<ObjectPool<Object>>;
 
     explicit ObjectPool(ObjectFabric fabric, ObjectFreeFunction freeFunc, ObjectBackToPoolFunction backFunc, int startSize, int maxSize);
     ~ObjectPool();
@@ -50,7 +50,7 @@ public:
     ObjectPoolBuilder &setStartPoolSize(int size);
     ObjectPoolBuilder &setNormalPoolSize(int size);
 
-    typename ObjectPool<Object>::ObjectPoolPtr build();
+    typename ObjectPool<Object>::Ptr build();
 
 private:
     typename ObjectPool<Object>::ObjectBackToPoolFunction m_connectionBackToPoolFunc;
@@ -202,7 +202,7 @@ ObjectPoolBuilder<Object>::ObjectPoolBuilder()
 }
 
 template<typename Object>
-typename ObjectPool<Object>::ObjectPoolPtr ObjectPoolBuilder<Object>::build()
+typename ObjectPool<Object>::Ptr ObjectPoolBuilder<Object>::build()
 {
     if (!m_connectionFabric)
     {
@@ -227,7 +227,7 @@ typename ObjectPool<Object>::ObjectPoolPtr ObjectPoolBuilder<Object>::build()
                     m_maxPoolSize
                 );
 
-    return ObjectPool<Object>::ObjectPoolPtr(pool, [](ObjectPool<Object> *pool) { pool->destroy(); });
+    return ObjectPool<Object>::Ptr(pool, [](ObjectPool<Object> *pool) { pool->destroy(); });
 }
 
 #endif // OBJECTPOOL_HPP
