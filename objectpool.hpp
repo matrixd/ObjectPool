@@ -57,7 +57,7 @@ private:
     typename ObjectPool<Object>::ObjectFreeFunction m_connectionFreeFunc;
     typename ObjectPool<Object>::ObjectFabric m_connectionFabric;
     int m_startPoolSize;
-    int m_maxPoolSize;
+    int m_normalPoolSize;
 };
 
 template<typename Object>
@@ -141,13 +141,15 @@ void ObjectPool<Object>::freeObject(Object *object)
 }
 
 template<typename Object>
-int ObjectPool<Object>::count() const {
+int ObjectPool<Object>::count() const
+{
     return m_objsCount;
 }
 
 
 template<typename Object>
-ObjectPool<Object>::~ObjectPool() {
+ObjectPool<Object>::~ObjectPool()
+{
     while (!m_objs.empty())
     {
         m_freeFunc(m_objs.front());
@@ -189,13 +191,13 @@ ObjectPoolBuilder<Object> &ObjectPoolBuilder<Object>::setStartPoolSize(int size)
 template<typename Object>
 ObjectPoolBuilder<Object> &ObjectPoolBuilder<Object>::setNormalPoolSize(int size)
 {
-    m_maxPoolSize = size;
+    m_normalPoolSize = size;
     return *this;
 }
 
 template<typename Object>
 ObjectPoolBuilder<Object>::ObjectPoolBuilder()
-    : m_maxPoolSize(-1)
+    : m_normalPoolSize(-1)
     , m_startPoolSize(3)
 {
 
@@ -219,12 +221,17 @@ typename ObjectPool<Object>::Ptr ObjectPoolBuilder<Object>::build()
         m_connectionFreeFunc = [] (Object *ptr) { delete ptr; };
     }
 
+    if (!m_normalPoolSize)
+    {
+        m_normalPoolSize = m_startPoolSize;
+    }
+
     ObjectPool<Object> *pool = new ObjectPool<Object>(
                     m_connectionFabric,
                     m_connectionFreeFunc,
                     m_connectionBackToPoolFunc,
                     m_startPoolSize,
-                    m_maxPoolSize
+                    m_normalPoolSize
                 );
 
     return ObjectPool<Object>::Ptr(pool, [](ObjectPool<Object> *pool) { pool->destroy(); });
