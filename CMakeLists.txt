@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 2.8)
+
+project(objectPool)
+set(TEST "${PROJECT_NAME}test")
+enable_testing()
+find_package(GTest REQUIRED)
+find_package(PkgConfig REQUIRED)
+#pkg_search_module(GMOCK REQUIRED "gmock")
+#include_directories(${GTEST_INCLUDE_DIRS} ${GMock_INCLUDE_DIRS})
+include_directories(${GTEST_INCLUDE_DIRS})
+
+add_executable(${TEST} "tests.cpp")
+FILE(GLOB_RECURSE LibFiles "*.hpp")
+add_custom_target(headers SOURCES ${LibFiles})
+
+message(STATUS "gtest libs")
+message(STATUS ${GTEST_BOTH_LIBRARIES})
+#target_link_libraries(${TEST} "pthread" ${GMOCK_LIBRARIES} ${GMOCK_STATIC_LIBRARIES} ${GTEST_BOTH_LIBRARIES} )
+target_link_libraries(${TEST} ${GTEST_BOTH_LIBRARIES} "gmock" "gmock_main" "pthread")
+#link_directories(${GMOCK_LIBRARY_DIRS})
+add_test("tests.cpp" ${TEST})
