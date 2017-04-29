@@ -1,5 +1,5 @@
-#ifndef CONNECTIONPOOL_HPP
-#define CONNECTIONPOOL_HPP
+#ifndef OBJECTPOOL_HPP
+#define OBJECTPOOL_HPP
 
 #include <memory>
 #include <functional>
@@ -230,4 +230,4 @@ typename ObjectPool<Object>::ObjectPoolPtr ObjectPoolBuilder<Object>::build()
     return ObjectPool<Object>::ObjectPoolPtr(pool, [](ObjectPool<Object> *pool) { pool->destroy(); });
 }
 
-#endif // CONNECTIONPOOL_HPP
+#endif // OBJECTPOOL_HPP
